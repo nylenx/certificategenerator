@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Download</title>
+
+    <!-- Bootstrap 4.0 W3Schools -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Bootswatch Theme slate -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.0.2/slate/bootstrap.min.css" integrity="sha512-C42uYSECf+bXOviQ1qRrb3iJraTfOnsvZs84WaiU2i7M0sf+Mu68IrpksryDHIINu7CoaPEn0MoY8Ahmm0mCPg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- My style sheet-->
+    <link rel="stylesheet" href="styles/host.css">
+
+    <!-- firebase libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.7.0/firebase-database.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.7.0/firebase-storage.min.js" integrity="sha512-8gNlfkQK+k/R9uChQ6uVbX+gWv83SFXsOUAaVlnYLvKG8PMAY3w9Zjf61BQXGluY2cCKRRmDcSvYrE1T+xS8Qg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!-- Excel to JSON library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js" integrity="sha512-jDEmOIskGs/j5S3wBWQAL4pOYy3S5a0y3Vav7BgXHnCVcUBXkf1OqzYS6njmDiKyqes22QEX8GSIZZ5pGk+9nA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>   
+    
+    <!-- Sweetalert -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <!-- p5 js library -->
+    <script src="library/p5/p5.js"></script>
+
+    <!-- My JavaScript -->
+    <script src="scripts/host.js"></script> 
+
+</head>
+
+<body>
+
+  <!-- Navbar Participants and Admin -->
+    
+  <nav class="navbar navbar-expand-md fixed-top bg-dark navbar-dark">
+
+    <ul class="navbar-nav d-flex flex-row">
+      <li class="nav-item">
+          <a class="nav-link" href="participants.html"><h5>Participants</h5></a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link active" href="#"><h5>Host</h5></a>
+      </li>
+    </ul>  
+  
+    <button id="navAuth_btn" class="navbar-toggler d-none" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul id="navAuth_ul" class="nav navbar-nav d-none ml-auto">
+        <li class="m-auto"><h5>Undefined</h5></li>
+        <li class="mx-2">
+        </li>
+        <li class="btn btn-outline-light rounded-pill m-auto" onclick="logOut()">Log Out</li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row" id="authForm" style="margin-top: 25vh;">
+      <div class="col-sm-6 mx-auto">
+        <div id = "frm" class="text-center container-fluid" >
+          <div class="form-group">
+            <h1><label class="form-label text-white">WELCOME</label></h1>
+            <h6><label class="form-label text-white">Plese enter your email address and password!</label></h6>
+            <div class="form-floating mb-3">
+              <input type="email" class="form-control rounded-pill" id="floatingInput" placeholder="name@example.com">
+              <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+              <input type="password" class="form-control rounded-pill" id="floatingPassword" placeholder="Password">
+              <label for="floatingPassword">Password</label>
+            </div>
+          </div>
+          <div class="form-group my-3">
+            <button id="SignUp" type="button" class="btn btn-success rounded-pill text-center" onclick="signup()">Sign Up</button>
+            <p class="text-white my-auto">OR</p>
+            <button id="LogIn" type="button" class="btn btn-info rounded-pill text-center" onclick="login()">Log In</button>
+          </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main" class="container d-none" style="margin-top: 10vh;">
+
+    <div class="d-flex justify-content-between" id="eventContainerHeading">
+      <h4 id="EventTitle">Your events</h4>
+      <h4>Your Host Id</h4> 
+    </div>
+
+    <div class="container" id="eventContainer">
+      <div class="row px-2 mb-2">
+
+        <div class="col-md-3">
+          <button class="card text-white p-1" id="createEventBtn" onclick="createNewEvent()">
+            <h1 class="mx-auto mt-auto mb-0">&plus;</h1>
+            <h6 class="mx-auto mb-auto mt-0">Create New Event</h6>
+          </button>
+        </div>
+
+      </div>   
+    </div>
+
+    <!-- Full Screen Event Modal -->
+    <div class="modal fade" tabindex="-1" id="createEventModal">
+      <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-lg-5 d-flex justify-content-center" id="canvasDiv">
+                </div>
+                <div class="col-lg-7" id="formDiv" oninput="saveButtonState()">
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary rounded-pill" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-outline-dark rounded-pill" id="verifyButton" onclick="eventVerification(undefined,undefined)">Verify</button>
+            <button type="button" class="btn btn-success disabled rounded-pill" id="saveButton" onclick="eventSave(undefined,undefined)">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
