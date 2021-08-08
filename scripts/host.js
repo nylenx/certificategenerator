@@ -1,3 +1,4 @@
+const cors = require('cors')({origin: true});
 const app =firebase.initializeApp({ 
     apiKey: "AIzaSyDAae-f0eoxefT0nvlfnl5olzEmyfGI7xo",
     authDomain: "certificate-generator-bd93b.firebaseapp.com",
